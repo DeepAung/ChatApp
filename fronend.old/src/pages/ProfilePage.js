@@ -48,6 +48,7 @@ const ProfilePage = () => {
       formData.append("avatar", file);
     }
 
+    console.log("file: " + file)
     console.log("form: " + JSON.stringify(formData));
 
     let response = await fetch(`http://127.0.0.1:8000/api/update-user/`, {
@@ -73,7 +74,6 @@ const ProfilePage = () => {
         <Link to="/">
           <ArrowLeft className="arrow-left" />
         </Link>
-        <input className="pointer" type="submit" value="Update" />
       </div>
       <div className="login-page">
         <form
@@ -81,6 +81,7 @@ const ProfilePage = () => {
             updateProfile(e);
           }}
         >
+          <input className="pointer" type="submit" value="Update" />
           <div className="login-form">
             <img src={process.env.PUBLIC_URL + User?.avatar} alt="avatar" />
 

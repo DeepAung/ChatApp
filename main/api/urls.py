@@ -9,25 +9,17 @@ urlpatterns = [
     path('token/', views.CustomTokenObtainPairView.as_view()),
     path('token/refresh/', jwt_views.TokenRefreshView.as_view()),
     # comment_part ----------------------------- #
-    path("create-user/", views.createUser),
-    path("list-user/<int:pk>/", views.listUser),
-    path("update-user/", views.updateUser),
-    path("delete-user/<int:pk>/", views.deleteUser),
-    path("get-user/<int:pk>/", views.getUser),
+    path('users/', views.UserList.as_view()),
+    path("users/<int:pk>/", views.UserDetail.as_view()),
     # comment_part ----------------------------- #
-    path("create-room/", views.createRoom),
-    path("list-room/", views.listRoom),
-    path("detail-room/<int:pk>/", views.detailRoom),
-    path("update-room/<int:pk>/", views.updateRoom),
-    path("delete-room/<int:pk>/", views.deleteRoom),
-    path("join-room/<int:pk>/", views.joinRoom),
-    path("leave-room/<int:pk>/", views.leaveRoom),
+    path("rooms/", views.RoomList.as_view()),
+    path("rooms/<int:pk>/", views.RoomDetail.as_view()),
+    path('rooms/<int:pk>/users/', views.listUserInRoom),
+    path('rooms/<int:pk>/messages/', views.listMessageInRoom),
+    path("rooms/<int:pk>/join/", views.joinRoom),
+    path("rooms/<int:pk>/leave/", views.leaveRoom),
     # comment_part ----------------------------- #
-    path("create-message/", views.createMessage),
-    path("list-message/<int:pk>/", views.listMessage),
-    path("update-message/<int:pk>/", views.updateMessage),
-    path("delete-message/<int:pk>/", views.deleteMessage),
+    path("messages/", views.MessageList.as_view()),
+    path("messages/<int:pk>/", views.MessageDetail.as_view()),
     # comment_part ----------------------------- #
-    # path('login/', views.login_user),
-    # path('logout/', views.logout_user)
 ]
