@@ -97,6 +97,7 @@ input {
 }
 
 input {
+  color: var(--first-color);
   background-color: rgb(205, 205, 205);
 }
 

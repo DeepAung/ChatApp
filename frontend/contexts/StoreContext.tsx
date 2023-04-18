@@ -58,6 +58,10 @@ export const StoreProvider: FC<any> = ({ children }) => {
   }
 
   useEffect(() => {
+    setRooms([]);
+    setUsers([]);
+    setMessages([]);
+
     if (token == undefined) return;
 
     fetchData("rooms/", "GET", {}, token)

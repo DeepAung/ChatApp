@@ -8,6 +8,8 @@
   height: 70vh;
   display: block;
   margin-right: 5rem;
+
+  border-radius: 0.5rem;
 }
 
 .info > * {

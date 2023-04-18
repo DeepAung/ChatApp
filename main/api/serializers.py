@@ -53,7 +53,7 @@ class UserCreationSerializer(serializers.ModelSerializer):
         password = data.get('password')
         confirm_password = data.pop('password2')
         if password != confirm_password:
-            raise ValidationError('.............')
+            raise ValidationError('password is not the same')
         return data
 
     def create(self, validated_data):

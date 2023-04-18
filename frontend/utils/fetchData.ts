@@ -15,11 +15,15 @@ export async function fetchData(
     body: Object.keys(body).length == 0 ? null : JSON.stringify(body),
   });
 
-  const data = res.json();
+  const data = await res.json();
 
   if (res.ok) {
     return data;
   } else {
-    throw new Error(res.statusText);
+    throw {
+      error: new Error(res.statusText),
+      res,
+      data,
+    };
   }
 }

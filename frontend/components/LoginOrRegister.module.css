@@ -35,7 +35,31 @@
 }
 
 .form .inputForm {
+  position: relative;
+  margin-inline: auto;
+  width: 50%;
+}
+
+.form .inputForm span {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 999;
+
+  height: 100%;
+  display: flex;
+  align-items: center;
+  margin-right: 1rem;
+}
+
+.form .inputForm span .icon {
+  cursor: pointer;
+}
+
+.form .inputForm input {
   padding: 0.75rem;
+  display: block;
+  width: 100%;
 }
 
 .form .submitBtn {
@@ -49,12 +73,23 @@
   margin: 1.5rem auto;
 }
 
-.form p > * {
+.form > p > * {
   color: var(--third-color);
   font-weight: 700;
+  margin-left: 0.25rem;
 }
 
-.form p > *:hover {
+.form > p > *:hover {
   text-decoration: underline;
   text-decoration-thickness: 0.1rem;
+}
+
+.errList {
+  margin-top: 2rem;
+  color: rgb(214, 0, 0);
+  font-size: large;
+}
+
+.errList p span {
+  font-weight: 600;
 }

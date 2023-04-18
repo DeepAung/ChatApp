@@ -5,7 +5,6 @@ import styles from "./ChatBody.module.css";
 import { fetchData } from "@/utils/fetchData";
 import MessageItem from "./MessageItem";
 import { StoreContext } from "@/contexts/StoreContext";
-import { User } from "@/types/User";
 import { Message } from "@/types/Message";
 import usePrevious from "@/hooks/usePrevious";
 
@@ -26,6 +25,9 @@ function ChatBody() {
       messagesEnd.current?.scrollIntoView({ behavior: "auto" });
     }
   }, [messages, preMessages]);
+  useEffect(() => {
+    messagesEnd.current?.scrollIntoView({ behavior: "auto" });
+  }, [roomId]);
 
   async function createMessageHandler(e: any) {
     if (socket == undefined) return;

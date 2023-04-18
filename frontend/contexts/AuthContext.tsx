@@ -10,17 +10,17 @@ import { MyUser } from "@/types/MyUser";
 type contextType = {
   myUser: MyUser | undefined;
   token: Token | undefined;
-  login: (inputData: object) => void;
-  logout: () => void;
-  register: (inputData: object) => void;
+  login: (inputData: object) => Promise<object>;
+  logout: () => Promise<void>;
+  register: (inputData: object) => Promise<object>;
 };
 
 const initialValue = {
   myUser: undefined,
   token: undefined,
-  login: () => {},
-  logout: () => {},
-  register: () => {},
+  login: async () => { return {} },
+  logout: async () => {},
+  register: async () => { return {} },
 };
 
 export const AuthContext = createContext<contextType>(initialValue);
@@ -42,37 +42,28 @@ export const AuthProvider: FC<any> = ({ children }) => {
 
   async function login(inputData: object) {
     console.log("login()");
-    const res = await fetch(`http://127.0.0.1:8000/api/token/`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(inputData),
-    });
+    let errObj: object = {};
 
-    const data: Token = await res.json();
+    await fetchData("token/", "POST", inputData, undefined)
+      .then((data) => {
+        setToken(data);
+        setMyUser(jwt_decode(data.access));
+        setCookie("token", JSON.stringify(data));
+        router.push("/");
+      })
+      .catch((err) => (errObj = err.data));
 
-    if (res.ok) {
-      setToken(data);
-      setMyUser(jwt_decode(data.access));
-      setCookie("token", JSON.stringify(data));
-      router.push("/");
-    } else {
-      alert("Something went wrong!" + res.statusText);
-    }
+    return errObj;
   }
 
   async function register(inputData: object) {
-    const res = await fetch(`http://127.0.0.1:8000/api/users/`, {
-      method: "POST",
-      body: JSON.stringify(inputData),
-    });
+    let errObj: object = {};
 
-    if (res.ok) {
-      router.push("/login");
-    } else {
-      alert("Something went wrong!");
-    }
+    await fetchData("users/", "POST", inputData, undefined)
+      .then((data) => router.push("/login"))
+      .catch((err) => (errObj = err.data));
+
+    return errObj;
   }
 
   async function logout() {
