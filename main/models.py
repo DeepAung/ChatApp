@@ -6,13 +6,13 @@ from django.contrib.humanize.templatetags import humanize
 # Create your models here.
 
 
-def imgFile(instance, filename):
-    return '/'.join(['images', str(instance.name), filename])
+def upload_to(instance, filename):
+    return f'images/{filename}'
 
 
 class User(AbstractUser):
     bio = models.TextField(max_length=500, blank=True, null=True)
-    avatar = models.ImageField(blank=True, null=True, default='avatar.svg')
+    avatar = models.ImageField(default='avatar.svg', upload_to=upload_to)
     address = models.EmailField(null=True, blank=True)
 
     def __str__(self):

@@ -1,4 +1,5 @@
 .homepage {
+  height: 90%;
   display: grid;
   grid-template-columns: 1fr 3fr 1fr;
 }

@@ -5,5 +5,6 @@ export type User = {
   last_name: string;
   bio: string;
   avatar: string;
+  get_avatar: string;
   address: string;
 };

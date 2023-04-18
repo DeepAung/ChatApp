@@ -22,10 +22,18 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class UserShowSerializer(serializers.ModelSerializer):
+    get_avatar = serializers.SerializerMethodField('_get_avatar')
+
+    def _get_avatar(self, user):
+        if user.avatar:
+            return 'http://127.0.0.1:8000' + user.avatar.url
+        else:
+            return 'http://127.0.0.1:8000/media/avatar.svg'
+
     class Meta:
         model = User
         fields = ['id', 'username', 'first_name',
-                  'last_name', 'bio', 'avatar', 'address']
+                  'last_name', 'bio', 'avatar', 'get_avatar', 'address']
 
 
 class UserCreationSerializer(serializers.ModelSerializer):

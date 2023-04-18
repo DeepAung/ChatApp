@@ -79,7 +79,7 @@ class UserDetail(APIView):
 
         user = get_object(User, pk)
         serializer = UserShowSerializer(
-            instance=user, data=request.data, partial=True, context={'request': request})
+            instance=user, data=request.data, partial=True)
 
         if serializer.is_valid():
             serializer.save()

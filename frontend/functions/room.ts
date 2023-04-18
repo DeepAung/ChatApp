@@ -5,7 +5,7 @@ export async function getRooms(token: Token) {
   const res = await fetch(`http://127.0.0.1:8000/api/rooms/`, {
     method: "GET",
     headers: {
-      Authorization: "Bearer " + String(token.access),
+      Authorization: "Bearer " + token.access,
     },
   });
   const data: Room[] = await res.json();
@@ -22,7 +22,7 @@ export async function getRoom(id: number, token: Token) {
   const res = await fetch(`http://127.0.0.1:8000/api/rooms/${id}/`, {
     method: "GET",
     headers: {
-      Authorization: "Bearer " + String(token.access),
+      Authorization: "Bearer " + token.access,
     },
   });
 
@@ -40,7 +40,7 @@ export async function createRoom(body: object, token: Token) {
   const res = await fetch(`http://127.0.0.1:8000/api/rooms/`, {
     method: "POST",
     headers: {
-      Authorization: "Bearer " + String(token.access),
+      Authorization: "Bearer " + token.access,
     },
     body: JSON.stringify(body),
   });
@@ -59,7 +59,7 @@ export async function updateRoom(id: number, body: object, token: Token) {
   const res = await fetch(`http://127.0.0.1:8000/api/rooms/${id}`, {
     method: "PATCH",
     headers: {
-      Authorization: "Bearer " + String(token.access),
+      Authorization: "Bearer " + token.access,
     },
     body: JSON.stringify(body),
   });
@@ -78,7 +78,7 @@ export async function deleteRoom(id: number, token: Token) {
   const res = await fetch(`http://127.0.0.1:8000/api/rooms/${id}`, {
     method: "DELETE",
     headers: {
-      Authorization: "Bearer " + String(token.access),
+      Authorization: "Bearer " + token.access,
     },
   });
 

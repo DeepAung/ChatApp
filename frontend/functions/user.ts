@@ -1,6 +1,5 @@
 import { Token } from "@/types/Token";
 import { User } from "@/types/User";
-import { createFetch } from "@/utils/createFetch";
 
 // export async function createUser(body: object) {
 //   const res = await fetch(`http://127.0.0.1:8000/api/users/`, {

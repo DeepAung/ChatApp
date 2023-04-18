@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@100;200;300;400;500;600;700&display=swap");
 
 /* color palette from <https://github.com/vuejs/theme> */
@@ -82,6 +83,32 @@ body {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+textarea,
+button,
+input {
+  color: var(--color-background-mute);
+  background: var(--first-color);
+  transition: color 0.5s, background-color 0.5s;
+  font-family: Inter, "IBM Plex Sans Thai", -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans",
+    "Helvetica Neue", sans-serif;
+}
+
+input {
+  background-color: rgb(205, 205, 205);
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px rgb(205, 205, 205) inset !important;
+}
+
+#__next {
+  height: 100vh;
 }
 
 a {

@@ -5,21 +5,24 @@ import React, { useContext } from "react";
 import styles from "./Navbar.module.css";
 
 function NavBar() {
-  const { user, token, logout } = useContext(AuthContext);
+  const { myUser, token, logout } = useContext(AuthContext);
   return (
     <div className={styles.navbarContainer}>
       <Link href="/" className={styles.title}>
         Chat App
       </Link>
-      {user ? (
-        <button className={styles.btn} onClick={(e) => logout()}>
-          Logout
-        </button>
-      ) : (
-        <Link className={styles.btn} href="/login">
-          Login
-        </Link>
-      )}
+      <div className={styles.wrapper}>
+        <Link className={styles.username} href={`/user/${myUser?.user_id}`}>{myUser?.username}</Link>
+        {myUser ? (
+          <button className={styles.btn} onClick={(e) => logout()}>
+            Logout
+          </button>
+        ) : (
+          <Link className={styles.btn} href="/login">
+            Login
+          </Link>
+        )}
+      </div>
     </div>
   );
 }

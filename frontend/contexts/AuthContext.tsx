@@ -1,26 +1,34 @@
 import { createContext, useState, useEffect, FC } from "react";
 import jwt_decode from "jwt-decode";
 import { useRouter } from "next/router";
-import { User } from "@/types/User";
-import { AuthContextType } from "@/types/AuthContextType";
 import { Token } from "@/types/Token";
 
 import { getCookie, setCookie, deleteCookie } from "cookies-next";
+import { fetchData } from "@/utils/fetchData";
+import { MyUser } from "@/types/MyUser";
 
-export const AuthContext = createContext<AuthContextType>({
-  user: undefined,
+type contextType = {
+  myUser: MyUser | undefined;
+  token: Token | undefined;
+  login: (inputData: object) => void;
+  logout: () => void;
+  register: (inputData: object) => void;
+};
+
+const initialValue = {
+  myUser: undefined,
   token: undefined,
   login: () => {},
   logout: () => {},
   register: () => {},
-});
+};
 
-export function initAuthContext() {}
+export const AuthContext = createContext<contextType>(initialValue);
 
 export const AuthProvider: FC<any> = ({ children }) => {
   const router = useRouter();
 
-  const [user, setUser] = useState<User>();
+  const [myUser, setMyUser] = useState<MyUser>();
   const [token, setToken] = useState<Token>();
   const [loading, setLoading] = useState(true);
 
@@ -28,7 +36,7 @@ export const AuthProvider: FC<any> = ({ children }) => {
     const tokenData = getCookie("token");
     if (typeof tokenData == "string") {
       setToken(JSON.parse(tokenData));
-      setUser(jwt_decode(tokenData));
+      setMyUser(jwt_decode(tokenData));
     }
   }, []);
 
@@ -46,7 +54,7 @@ export const AuthProvider: FC<any> = ({ children }) => {
 
     if (res.ok) {
       setToken(data);
-      setUser(jwt_decode(data.access));
+      setMyUser(jwt_decode(data.access));
       setCookie("token", JSON.stringify(data));
       router.push("/");
     } else {
@@ -60,8 +68,6 @@ export const AuthProvider: FC<any> = ({ children }) => {
       body: JSON.stringify(inputData),
     });
 
-    // const data: User = await res.json();
-
     if (res.ok) {
       router.push("/login");
     } else {
@@ -71,27 +77,24 @@ export const AuthProvider: FC<any> = ({ children }) => {
 
   async function logout() {
     setToken(undefined);
-    setUser(undefined);
+    setMyUser(undefined);
     deleteCookie("token");
     router.push("/login");
   }
 
   async function updateToken() {
     if (!token) return;
-    const res = await fetch(`http://127.0.0.1:8000/api/token/refresh/`, {
-      method: "POST",
-      body: JSON.stringify({ refresh: token.refresh }),
-    });
 
-    const data: Token = await res.json();
-
-    if (res.ok) {
-      setToken(data);
-      setUser(jwt_decode(data.access));
-      setCookie("token", JSON.stringify(data));
-    } else {
-      logout();
-    }
+    fetchData("token/refresh/", "POST", { refresh: token.refresh }, undefined)
+      .then((data) => {
+        setToken(data);
+        setMyUser(jwt_decode(data.access));
+        setCookie("token", JSON.stringify(data));
+      })
+      .catch((err) => {
+        console.log(err);
+        logout();
+      });
   }
 
   useEffect(() => {
@@ -111,7 +114,7 @@ export const AuthProvider: FC<any> = ({ children }) => {
   }, [token, loading]);
 
   const contextData = {
-    user: user,
+    myUser: myUser,
     token: token,
     login: login,
     logout: logout,

@@ -147,8 +147,8 @@ STATICFILES_DIRS = [
 ]
 
 
-MEDIA_URL = "/images/"
-MEDIA_ROOT = BASE_DIR / 'frontend/public/images'
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / 'media'
 
 
 AUTH_USER_MODEL = 'main.User'
