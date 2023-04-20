@@ -41,7 +41,6 @@ export const AuthProvider: FC<any> = ({ children }) => {
   }, []);
 
   async function login(inputData: object) {
-    console.log("login()");
     let errObj: object = {};
 
     await fetchData("token/", "POST", inputData, undefined)

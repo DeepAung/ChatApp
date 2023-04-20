@@ -16,6 +16,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenToSquare, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { fetchData } from "@/utils/fetchData";
 import { AuthContext } from "@/contexts/AuthContext";
+import Link from "next/link";
 
 type Props = {
   message: Message;
@@ -88,17 +89,22 @@ function MessageItem({ message, changingState, socket, user }: Props) {
       className={styles.container}
     >
       {user && (
-        <Image
-          className={styles.img}
-          src={user?.get_avatar}
-          width={100}
-          height={100}
-          alt="profile"
-        />
+        <Link href={`/user/${user?.id}`} className={styles.img}>
+          <Image
+            
+            src={user?.get_avatar}
+            width={100}
+            height={100}
+            alt="profile"
+          />
+        </Link>
       )}
 
-      <div className={styles.textWrapper}>
-        <h3 className={styles.username}>{user?.username}</h3>
+      <div>
+        <Link href={`/user/${user?.id}`} className={styles.username}>
+          {user?.username}
+        </Link>
+        <span className={styles.timeago}>{message.timeago}</span>
 
         {changingId == message.id ? (
           <div

@@ -35,7 +35,7 @@ function ChatBody() {
 
     e.preventDefault();
 
-    let body = {
+    const body = {
       room: roomId,
       content: e.target.value,
     };
@@ -55,19 +55,18 @@ function ChatBody() {
   useEffect(() => {
     if (roomId == undefined) return;
 
-    if (socket == undefined) {
-      setSocket(new WebSocket(`ws://127.0.0.1:8000/ws/chat/${roomId}/`));
-    }
+    if (socket) socket.close();
+    setSocket(new WebSocket(`ws://127.0.0.1:8000/ws/chat/${roomId}/`));
 
-    if (!socket) return;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [roomId]);
 
-    socket.onopen = async (e) => console.log("open");
-    socket.onclose = async (e) => console.log("close");
+  useEffect(() => {
+    if (socket == undefined) return;
+
     socket.onerror = async (e) => console.log("msgerr: ", e);
 
     socket.onmessage = async (e) => {
-      console.log("onmessage");
-
       const data = await JSON.parse(e.data);
 
       if (data.method === "POST") {
@@ -80,7 +79,7 @@ function ChatBody() {
         setMessages((prev) => prev.filter((message) => message.id !== data.id));
       }
     };
-  }, [socket, roomId, setMessages]);
+  }, [socket, setMessages]);
 
   return (
     <div className={styles.container}>
