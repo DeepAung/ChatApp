@@ -72,7 +72,7 @@ function MessageItem({ message, changingState, socket, user }: Props) {
   function deleteMessageHandler(e: any) {
     if (socket == undefined) return;
 
-    let result = confirm("Are you sure you want to delete this message?");
+    const result = confirm("Are you sure you want to delete this message?");
     if (result) {
       fetchData(`messages/${message.id}/`, "DELETE", {}, token)
         .then((data) =>

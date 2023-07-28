@@ -20,8 +20,17 @@ export async function fetchData(
     body: bodyData,
   });
 
-  const data = await res.json();
-
+  let data: any;
+  try {
+    data = await res.json();
+  } catch(err) {
+    throw {
+      error: new Error(res.statusText),
+      res,
+      data: {},
+    }
+  }
+  
   if (res.ok) {
     return data;
   } else {

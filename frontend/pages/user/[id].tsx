@@ -104,12 +104,12 @@ function UserProfile() {
 
     const url = `users/${myUser?.user_id}/`;
     fetchData(url, "PATCH", formData, token, false)
-      .then((data) => {
+      .catch((err) => console.log(err))
+      .finally(() => {
         setIsEditing(false);
         setImageName("Upload an avatar");
         setTriggerUseEffect(!triggerUseEffect);
-      })
-      .catch((err) => console.log(err));
+      });
   }
 
   async function cancelEdit(e: any) {

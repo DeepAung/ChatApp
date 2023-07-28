@@ -52,7 +52,11 @@ function LoginOrRegister({ type }: { type: "login" | "register" }) {
         </div>
         <div className={styles.inputForm}>
           <span>
-            <FontAwesomeIcon onClick={toggleVisibility} icon={faEye} className={styles.icon} />
+            <FontAwesomeIcon
+              onClick={toggleVisibility}
+              icon={faEye}
+              className={styles.icon}
+            />
           </span>
           <input
             type="password"
@@ -65,7 +69,11 @@ function LoginOrRegister({ type }: { type: "login" | "register" }) {
         {type == "register" && (
           <div className={styles.inputForm}>
             <span>
-              <FontAwesomeIcon onClick={toggleVisibility} icon={faEye} className={styles.icon} />
+              <FontAwesomeIcon
+                onClick={toggleVisibility}
+                icon={faEye}
+                className={styles.icon}
+              />
             </span>
             <input
               className={styles.inputForm}

@@ -123,6 +123,10 @@ class RoomDetail(APIView):
 
     def get(self, request, pk, format=None):
         room = get_object(Room, pk)
+
+        if not room.participants.filter(id=request.user.id):
+            return Response("you are not in this room", status=status.HTTP_400_BAD_REQUEST)
+
         serializer = RoomSerializer(room)
         return Response(serializer.data)
 
@@ -196,7 +200,7 @@ def listUserInRoom(request, pk):
     room = get_object(Room, pk)
     users = room.participants.all()
 
-    if not users.filter(id=request.user.id):
+    if not room.participants.filter(id=request.user.id):
         return Response("you are not in this room", status=status.HTTP_400_BAD_REQUEST)
 
     serializer = UserShowSerializer(users, many=True)

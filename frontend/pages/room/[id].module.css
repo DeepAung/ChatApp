@@ -3,17 +3,9 @@
   padding: 3rem;
 }
 
-.img {
-  width: auto;
-  height: 70vh;
-  display: block;
-  margin-right: 5rem;
-
-  border-radius: 0.5rem;
-}
-
 .info {
-  width: 100%;
+  width: 90%;
+  margin: 0 auto;
 }
 
 .info > * {
@@ -32,7 +24,7 @@
 }
 
 .info p {
-  font-size: 1rem;
+  font-size: 1.2rem;
 }
 
 .info .section > * {
@@ -50,6 +42,24 @@
 
 .info .section > *:first-child:hover::before {
   display: inline;
+}
+
+.info .user {
+  margin-bottom: 0.5rem;
+}
+
+.info .user > * {
+  text-decoration: underline;
+}
+
+.info .user > *:hover {
+  color: var(--third-color);
+  text-decoration-color: var(--third-color);
+}
+
+.deleteBtn {
+  color: var(--fourth-color) !important;
+  background-color: rgb(206, 50, 50) !important;
 }
 
 /* -------------------- isEditing section -------------------- */
@@ -112,23 +122,4 @@
 .info button {
   color: var(--first-color);
   background-color: var(--fourth-color);
-}
-
-.info label {
-  color: black;
-  background-color: var(--fourth-color);
-
-  font-weight: 600;
-  
-  display: inline-block !important;
-  padding: 0.5rem 1rem;
-  cursor: pointer;
-  border-radius: 0.3rem;
-
-  transition: color 0.25s ease-out, background-color 0.25s ease-out;
-}
-
-.info label:hover {
-  color: var(--fourth-color);
-  background-color: var(--second-color);
 }

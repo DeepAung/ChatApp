@@ -44,7 +44,6 @@ export const StoreContext = createContext<contextType>(initialValue);
 
 export const StoreProvider: FC<any> = ({ children }) => {
   const router = useRouter();
-  const { room: roomId } = router.query;
   const { token } = useContext(AuthContext);
 
   const [rooms, setRooms] = useState<Room[]>([]);
@@ -53,14 +52,16 @@ export const StoreProvider: FC<any> = ({ children }) => {
 
   const [usersById, setUsersById] = useState<UsersById>({});
 
-  function getUsersById(id: number): User {
-    return usersById[id];
-  }
-
   useEffect(() => {
     setRooms([]);
     setUsers([]);
     setMessages([]);
+
+    let roomId = -1;
+    if (router.query.room) roomId = Number(router.query.room);
+    else if (router.pathname.startsWith("/room/") && router.query.id) {
+      roomId = Number(router.query.id);
+    }
 
     if (token == undefined) return;
 
@@ -68,7 +69,7 @@ export const StoreProvider: FC<any> = ({ children }) => {
       .then((data) => setRooms(data))
       .catch((err) => console.log(err));
 
-    if (roomId == undefined) return;
+    if (roomId == -1) return;
 
     fetchData(`rooms/${roomId}/users/`, "GET", {}, token)
       .then((data) => setUsers(data))
@@ -77,7 +78,7 @@ export const StoreProvider: FC<any> = ({ children }) => {
     fetchData(`rooms/${roomId}/messages/`, "GET", {}, token)
       .then((data) => setMessages(data))
       .catch((err) => console.log(err));
-  }, [roomId, token]);
+  }, [router, token]);
 
   useEffect(() => {
     let newValue: UsersById = {};
