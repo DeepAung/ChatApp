@@ -14,6 +14,8 @@ export async function fetchData(
   if (useJson)
     bodyData = Object.keys(body).length == 0 ? null : JSON.stringify(body);
 
+  console.log(process.env.API_URL);
+  
   const res = await fetch(`http://127.0.0.1:8000/api/${path}`, {
     method: method,
     headers: headers,
