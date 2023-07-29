@@ -12,7 +12,11 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 from pathlib import Path
 from datetime import timedelta
+
 import os
+
+from dotenv import load_dotenv
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -88,10 +92,15 @@ TEMPLATES = [
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+  'default': {
+    'ENGINE': 'django_psdb_engine',
+    'NAME': os.environ.get('DB_NAME'),
+    'HOST': os.environ.get('DB_HOST'),
+    'PORT': os.environ.get('DB_PORT'),
+    'USER': os.environ.get('DB_USER'),
+    'PASSWORD': os.environ.get('DB_PASSWORD'),
+    'OPTIONS': {'ssl': {'ca': os.environ.get('MYSQL_ATTR_SSL_CA')}, 'charset': 'utf8mb4'}
+  }
 }
 
 
@@ -203,28 +212,29 @@ ASGI_APPLICATION = 'chatapp.asgi.application'
 
 
 # using in memory channel layer
-CHANNEL_LAYERS = {
-    'default': {
-        "BACKEND": "channels.layers.InMemoryChannelLayer",
-    },
-}
-
-# using redis
 # CHANNEL_LAYERS = {
 #     'default': {
-#         'BACKEND': 'channels_redis.core.RedisChannelLayer',
-#         'CONFIG': {
-#             "hosts": [('127.0.0.1', 6379)],
-#         },
+#         "BACKEND": "channels.layers.InMemoryChannelLayer",
 #     },
 # }
-# CACHES = {
-#     'default': {
-#         'BACKEND': 'django_redis.cache.RedisCache',
-#         # redis server
-#         'LOCATION': 'redis://localhost:6379/0',
-#         'OPTIONS': {
-#             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
-#         }
-#     }
-# }
+
+
+# using redis
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('rediss://red-cj29pf59aq0e0q179c40:kzkS2tEcspu25zrjiESt88W9KCIm40xz@singapore-redis.render.com', 6379)],
+        },
+    },
+}
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        # redis server
+        'LOCATION': 'rediss://red-cj29pf59aq0e0q179c40:kzkS2tEcspu25zrjiESt88W9KCIm40xz@singapore-redis.render.com:6379',
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+        }
+    }
+}
