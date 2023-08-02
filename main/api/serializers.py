@@ -7,6 +7,8 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 from main.models import Room, Message
 
+import os
+
 User = get_user_model()
 
 
@@ -26,9 +28,9 @@ class UserShowSerializer(serializers.ModelSerializer):
 
     def _get_avatar(self, user):
         if user.avatar:
-            return 'http://127.0.0.1:8000' + user.avatar.url
+            return str(os.getenv("BACK_END_HOST")) + user.avatar.url
         else:
-            return 'http://127.0.0.1:8000/media/avatar.svg'
+            return str(os.getenv("BACK_END_HOST")) + '/media/avatar.svg'
 
     class Meta:
         model = User

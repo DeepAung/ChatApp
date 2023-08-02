@@ -17,16 +17,20 @@ class ChatConsumer(AsyncWebsocketConsumer):
             self.channel_name
         )
 
-        print(threading.get_native_id())
+        print("websocket connect: " + str(threading.get_native_id()))
 
         await self.accept()
 
     async def disconnect(self, close_code):
+
         # Leave room group
         await self.channel_layer.group_discard(
             self.room_group_name,
             self.channel_name
         )
+
+        print("websocket disconnect: " + str(threading.get_native_id()))
+
 
     # Receive message from WebSocket
     async def receive(self, text_data):
@@ -49,7 +53,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     # Receive message from room group
     async def chat_message(self, event):
-        print("websocket:" + str(threading.get_native_id()))
+        print("websocket chat_message: " + str(threading.get_native_id()))
         # await asyncio.sleep(20)
         # Send message to WebSocket
         await self.send(text_data=json.dumps({
