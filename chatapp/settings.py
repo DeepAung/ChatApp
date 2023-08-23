@@ -22,39 +22,38 @@ load_dotenv()
 
 
 # using in memory channel layer ------------ #
-# CHANNEL_LAYERS = {
-#     'default': {
-#         "BACKEND": "channels.layers.InMemoryChannelLayer",
-#     },
-# }
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer",
+    },
+}
 # ------------------------------------------ #
 
 
 # using redis ------------------------------ #
+# redis_host = os.environ.get("REDISCLOUD_HOST")
+# redis_port = os.environ.get("REDISCLOUD_PORT")
+# redis_password = os.environ.get("REDISCLOUD_PASSWORD")
 
-redis_host = os.environ.get("REDISCLOUD_HOST")
-redis_port = os.environ.get("REDISCLOUD_PORT")
-redis_password = os.environ.get("REDISCLOUD_PASSWORD")
+# CHANNEL_LAYERS = {
+#     "default": {
+#         "BACKEND": "channels_redis.core.RedisChannelLayer",
+#         "CONFIG": {
+#             "hosts": [f"redis://:{redis_password}@{redis_host}:{redis_port}"],
+#         },
+#     },
+# }
 
-CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels_redis.core.RedisChannelLayer",
-        "CONFIG": {
-            "hosts": [f"redis://:{redis_password}@{redis_host}:{redis_port}"],
-        },
-    },
-}
-
-CACHES = {
-    "default": {
-        "BACKEND": "django_redis.cache.RedisCache",
-        # redis server
-        "LOCATION": f"redis://:{redis_password}@{redis_host}:{redis_port}",
-        "OPTIONS": {
-            "CLIENT_CLASS": "django_redis.client.DefaultClient",
-        },
-    }
-}
+# CACHES = {
+#     "default": {
+#         "BACKEND": "django_redis.cache.RedisCache",
+#         # redis server
+#         "LOCATION": f"redis://:{redis_password}@{redis_host}:{redis_port}",
+#         "OPTIONS": {
+#             "CLIENT_CLASS": "django_redis.client.DefaultClient",
+#         },
+#     }
+# }
 # ------------------------------------------ #
 
 
@@ -71,14 +70,14 @@ SECRET_KEY = os.environ.get("SECRET_KEY")
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = "RENDER" not in os.environ
+DEBUG = os.environ.get("IS_PRODUCTION") == "False"
 ALLOWED_HOSTS = []
 
-RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
-if RENDER_EXTERNAL_HOSTNAME:
-    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
+front_end_hosts_str = os.environ.get("FRONT_END_HOSTS")
+front_end_hosts = front_end_hosts_str.split(" ") if front_end_hosts_str else []
 
 if not DEBUG:
+    ALLOWED_HOSTS = front_end_hosts
     CSRF_COOKIE_SECURE = True
     SESSION_COOKIE_SECURE = True
     SECURE_SSL_REDIRECT = True
@@ -140,17 +139,13 @@ TEMPLATES = [
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {
-    "default": {
-        "ENGINE": "django_psdb_engine",
-        "NAME": os.environ.get("DB_NAME"),
-        "HOST": os.environ.get("DB_HOST"),
-        "PORT": os.environ.get("DB_PORT"),
-        "USER": os.environ.get("DB_USER"),
-        "PASSWORD": os.environ.get("DB_PASSWORD"),
-        "OPTIONS": {
-            "ssl": {"ca": os.environ.get("MYSQL_ATTR_SSL_CA")},
-            "charset": "utf8mb4",
-        },
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'myuser',
+        'USER': 'myuser',
+        'PASSWORD': 'mypassword',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
 
@@ -191,17 +186,17 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_URL = "/static/"
 
 # Following settings only make sense on production and may break development environments.
 if not DEBUG:
     # Tell Django to copy statics to the `staticfiles` directory
     # in your application directory on Render.
-    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+    STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
     # Turn on WhiteNoise storage backend that takes care of compressing static files
     # and creating unique names for each version so they can safely be cached forever.
-    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+    STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 
 # Default primary key field type
@@ -217,13 +212,13 @@ STATICFILES_DIRS = [BASE_DIR / "static"]
 
 
 MEDIA_URL = "/media/"
-MEDIA_ROOT = BASE_DIR / "media"
+# MEDIA_ROOT = BASE_DIR / "media"
 
 
 AUTH_USER_MODEL = "main.User"
 
 
-CORS_ORIGIN_WHITELIST = (os.environ.get("FRONT_END_HOST"),)
+CORS_ORIGIN_WHITELIST = front_end_hosts
 
 
 REST_FRAMEWORK = {
