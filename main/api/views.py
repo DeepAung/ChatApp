@@ -8,7 +8,16 @@ from rest_framework import status
 
 from rest_framework_simplejwt.views import TokenObtainPairView
 
-from .serializers import UserSerializer, RoomSerializer, ReadMessageSerializer, CreateMessageSerializer, UpdateMessageSerializer, UserShowSerializer, UserCreationSerializer, CustomTokenObtainPairSerializer
+from .serializers import (
+    UserSerializer,
+    RoomSerializer,
+    ReadMessageSerializer,
+    CreateMessageSerializer,
+    UpdateMessageSerializer,
+    UserShowSerializer,
+    UserCreationSerializer,
+    CustomTokenObtainPairSerializer,
+)
 from main.models import User, Room, Message
 
 # Create your views here.
@@ -31,30 +40,30 @@ def get_object(Model, pk):
         raise Http404
 
 
-@api_view(['GET'])
+@api_view(["GET"])
 def getRoutes(request):
     routes = {
-        '':                         '[GET] getRoutes',
-        'token/':                   '[POST] CustomTokenObtainPairView',
-        'token/refresh/':           '[POST] TokenRefreshView',
-        'users/':                   '[POST] UserList',
-        "users/<int:pk>/":          '[GET, PATCH, DELETE] UserDetail',
-        "rooms/":                   '[POST, GET] RoomList',
-        "rooms/<int:pk>/":          '[GET, PATCH, DELETE] RoomDetail',
-        'rooms/<int:pk>/users/':    '[GET] listUserInRoom',
-        'rooms/<int:pk>/messages/': '[GET] listMessageInRoom',
-        "rooms/<int:pk>/join/":     '[POST] joinRoom',
-        "rooms/<int:pk>/leave/":    '[POST] leaveRoom',
-        "messages/":                '[POST] MessageList',
-        "messages/<int:pk>/":       '[PATCH, DELETE] MessageDetail',
+        "": "[GET] getRoutes",
+        "token/": "[POST] CustomTokenObtainPairView",
+        "token/refresh/": "[POST] TokenRefreshView",
+        "users/": "[POST] UserList",
+        "users/<int:pk>/": "[GET, PATCH, DELETE] UserDetail",
+        "rooms/": "[POST, GET] RoomList",
+        "rooms/<int:pk>/": "[GET, PATCH, DELETE] RoomDetail",
+        "rooms/<int:pk>/users/": "[GET] listUserInRoom",
+        "rooms/<int:pk>/messages/": "[GET] listMessageInRoom",
+        "rooms/<int:pk>/join/": "[POST] joinRoom",
+        "rooms/<int:pk>/leave/": "[POST] leaveRoom",
+        "messages/": "[POST] MessageList",
+        "messages/<int:pk>/": "[PATCH, DELETE] MessageDetail",
     }
     return Response(routes)
+
 
 # comment_part -------------------------------------------------------------------------------------- #
 
 
 class UserList(APIView):
-
     def post(self, request, format=None):
         serializer = UserCreationSerializer(data=request.data)
 
@@ -62,7 +71,7 @@ class UserList(APIView):
             serializer.save()
             return Response(serializer.data)
         else:
-            return Response('create user failed', status=status.HTTP_400_BAD_REQUEST)
+            return Response("create user failed", status=status.HTTP_400_BAD_REQUEST)
 
 
 class UserDetail(APIView):
@@ -75,17 +84,19 @@ class UserDetail(APIView):
 
     def patch(self, request, pk, format=None):
         if pk != request.user.id:
-            return Response(f'incorrect user id {pk} {request.user.id}', status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                f"incorrect user id {pk} {request.user.id}",
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         user = get_object(User, pk)
-        serializer = UserShowSerializer(
-            instance=user, data=request.data, partial=True)
+        serializer = UserShowSerializer(instance=user, data=request.data, partial=True)
 
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
 
-        return Response('update user failed', status=status.HTTP_400_BAD_REQUEST)
+        return Response("update user failed", status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk, format=None):
         user = get_object(User, pk)
@@ -97,18 +108,18 @@ class UserDetail(APIView):
 
 # comment_part -------------------------------------------------------------------------------------- #
 
+
 class RoomList(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, format=None):
-        serializer = RoomSerializer(
-            data=request.data, context={'request': request})
+        serializer = RoomSerializer(data=request.data, context={"request": request})
 
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(serializer.data)
 
-        return Response('create room failed', status=status.HTTP_400_BAD_REQUEST)
+        return Response("create room failed", status=status.HTTP_400_BAD_REQUEST)
 
     def get(self, request, format=None):
         user = request.user
@@ -125,24 +136,31 @@ class RoomDetail(APIView):
         room = get_object(Room, pk)
 
         if not room.participants.filter(id=request.user.id):
-            return Response("you are not in this room", status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                "you are not in this room", status=status.HTTP_400_BAD_REQUEST
+            )
 
         serializer = RoomSerializer(room)
         return Response(serializer.data)
 
     def patch(self, request, pk, format=None):
         room = get_object(Room, pk)
-        serializer = RoomSerializer(
-            instance=room, data=request.data, partial=True)
+        serializer = RoomSerializer(instance=room, data=request.data, partial=True)
 
         if room.host.id != request.user.id:  # type: ignore
-            return Response('you are not the host', status=status.HTTP_400_BAD_REQUEST)
+            return Response("you are not the host", status=status.HTTP_400_BAD_REQUEST)
+
+        if not (request.user.id in request.data["participants"]):
+            return Response(
+                "Host need to be in the participants list",
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
 
-        return Response('update room failed', status=status.HTTP_400_BAD_REQUEST)
+        return Response("update room failed", status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk, format=None):
         room = get_object(Room, pk)
@@ -159,13 +177,14 @@ class MessageList(APIView):
 
     def post(self, request, format=None):
         serializer = CreateMessageSerializer(
-            data=request.data, context={'request': request})
+            data=request.data, context={"request": request}
+        )
 
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
 
-        return Response('createMessage failed', status=status.HTTP_400_BAD_REQUEST)
+        return Response("createMessage failed", status=status.HTTP_400_BAD_REQUEST)
 
 
 class MessageDetail(APIView):
@@ -174,13 +193,14 @@ class MessageDetail(APIView):
     def patch(self, request, pk, format=None):
         message = get_object(Message, pk)
         serializer = UpdateMessageSerializer(
-            instance=message, data=request.data, partial=True)
+            instance=message, data=request.data, partial=True
+        )
 
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
 
-        return Response('updateMessage failed', status=status.HTTP_400_BAD_REQUEST)
+        return Response("updateMessage failed", status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk, format=None):
         message = get_object(Message, pk)
@@ -188,13 +208,13 @@ class MessageDetail(APIView):
             content = message.content
             message.delete()
             return Response(f'deleteMessage "{content}"')
-        return Response('deleteMessage failed', status=status.HTTP_400_BAD_REQUEST)
+        return Response("deleteMessage failed", status=status.HTTP_400_BAD_REQUEST)
 
 
 # comment_part -------------------------------------------------------------------------------------- #
 
 
-@api_view(['GET'])
+@api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def listUserInRoom(request, pk):
     room = get_object(Room, pk)
@@ -207,7 +227,7 @@ def listUserInRoom(request, pk):
     return Response(serializer.data)
 
 
-@api_view(['GET'])
+@api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def listMessageInRoom(request, pk):
     room = get_object(Room, pk)
@@ -221,7 +241,7 @@ def listMessageInRoom(request, pk):
     return Response(serializers.data)
 
 
-@api_view(['POST'])
+@api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def joinRoom(request, pk):
     try:
@@ -235,10 +255,12 @@ def joinRoom(request, pk):
         serializer = RoomSerializer(room)
         return Response(serializer.data)
 
-    return Response("you had already joined this room", status=status.HTTP_400_BAD_REQUEST)
+    return Response(
+        "you had already joined this room", status=status.HTTP_400_BAD_REQUEST
+    )
 
 
-@api_view(['POST'])
+@api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def leaveRoom(request, pk):
     user = request.user
@@ -246,7 +268,13 @@ def leaveRoom(request, pk):
     try:
         room = get_object(Room, pk)
     except Room.DoesNotExist:
-        return Response('room does not exist', status=status.HTTP_400_BAD_REQUEST)
+        return Response("room does not exist", status=status.HTTP_400_BAD_REQUEST)
+
+    if user.id == room.host.id:  # type: ignore
+        return Response(
+            "you are the host. you cannot leave room",
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
     room.participants.remove(user)
     serializer = RoomSerializer(room)

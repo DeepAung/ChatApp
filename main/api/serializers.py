@@ -15,54 +15,71 @@ User = get_user_model()
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = '__all__'
+        fields = "__all__"
 
     def create(self, validated_data):
         user = User.objects.create(
-            username=validated_data['username'], password=validated_data["password"])
+            username=validated_data["username"], password=validated_data["password"]
+        )
         return user
 
 
 class UserShowSerializer(serializers.ModelSerializer):
-    get_avatar = serializers.SerializerMethodField('_get_avatar')
+    get_avatar = serializers.SerializerMethodField("_get_avatar")
 
     def _get_avatar(self, user):
         if user.avatar:
             return str(os.getenv("BACK_END_HOST")) + user.avatar.url
         else:
-            return str(os.getenv("BACK_END_HOST")) + '/media/avatar.svg'
+            return str(os.getenv("BACK_END_HOST")) + "/media/avatar.svg"
 
     class Meta:
         model = User
-        fields = ['id', 'username', 'first_name',
-                  'last_name', 'bio', 'avatar', 'get_avatar', 'address']
+        fields = [
+            "id",
+            "username",
+            "first_name",
+            "last_name",
+            "bio",
+            "avatar",
+            "get_avatar",
+            "address",
+        ]
 
 
 class UserCreationSerializer(serializers.ModelSerializer):
-    password2 = serializers.CharField(
-        label='Confirm Password', write_only=True)
+    password2 = serializers.CharField(label="Confirm Password", write_only=True)
 
     class Meta:
         model = User
-        fields = ['id', 'username', 'first_name', 'last_name',
-                  'bio', 'avatar', 'address', 'password', 'password2', ]
+        fields = [
+            "id",
+            "username",
+            "first_name",
+            "last_name",
+            "bio",
+            "avatar",
+            "address",
+            "password",
+            "password2",
+        ]
         extra_kwargs = {
-            'password': {'write_only': True},
-            'password2': {'write_only': True},
+            "password": {"write_only": True},
+            "password2": {"write_only": True},
         }
 
     def validate(self, data):
-        password = data.get('password')
-        confirm_password = data.pop('password2')
+        password = data.get("password")
+        confirm_password = data.pop("password2")
         if password != confirm_password:
-            raise ValidationError('password is not the same')
+            raise ValidationError("password is not the same")
         return data
 
     def create(self, validated_data):
-        username = validated_data.get('username')
-        password = validated_data.get('password')
-        bio = validated_data.get('bio')
-        bio = bio if bio else ''
+        username = validated_data.get("username")
+        password = validated_data.get("password")
+        bio = validated_data.get("bio")
+        bio = bio if bio else ""
         # if not validated_data.get('avartar'):
         # avartar = validated_data.get('avartar') # TODO: add this to form
         try:
@@ -77,72 +94,84 @@ class UserCreationSerializer(serializers.ModelSerializer):
 class RoomSerializer(serializers.ModelSerializer):
     class Meta:
         model = Room
-        fields = '__all__'
+        fields = "__all__"
 
     def create(self, validated_data):
-        request = self.context['request']
+        request = self.context["request"]
         user = request.user
 
         new_data = validated_data.copy()
-        new_data['host'] = user
-        new_data['participants'] = [user]
+        new_data["host"] = user
+        new_data["participants"] = [user]
 
         room = super().create(new_data)
         return room
 
 
+
 class ReadMessageSerializer(serializers.ModelSerializer):
-    timeago = serializers.SerializerMethodField('time_ago')
+    timeago = serializers.SerializerMethodField("time_ago")
 
     def time_ago(self, message):
         return message.time_ago()
 
     class Meta:
         model = Message
-        fields = '__all__'
+        fields = "__all__"
 
 
 class CreateMessageSerializer(serializers.ModelSerializer):
-    timeago = serializers.SerializerMethodField('time_ago')
+    timeago = serializers.SerializerMethodField("time_ago")
 
     def time_ago(self, message):
         return message.time_ago()
 
     class Meta:
         model = Message
-        fields = '__all__'
-        read_only_fields = ['id', 'timeago',
-                            'updated', 'created', 'user']  # exclude content and room
+        fields = "__all__"
+        read_only_fields = [
+            "id",
+            "timeago",
+            "updated",
+            "created",
+            "user",
+        ]  # exclude content and room
 
     def create(self, validated_data):
-        request = self.context['request']
+        request = self.context["request"]
         user = request.user
 
         new_data = validated_data.copy()
-        new_data['user'] = user
+        new_data["user"] = user
 
         message = super().create(new_data)
         return message
 
 
 class UpdateMessageSerializer(serializers.ModelSerializer):
-    timeago = serializers.SerializerMethodField('time_ago')
+    timeago = serializers.SerializerMethodField("time_ago")
 
     def time_ago(self, message):
         return message.time_ago()
 
     class Meta:
         model = Message
-        fields = '__all__'
-        read_only_fields = ['id', 'timeago',
-                            'updated', 'created', 'user', 'room']  # exclude content
+        fields = "__all__"
+        read_only_fields = [
+            "id",
+            "timeago",
+            "updated",
+            "created",
+            "user",
+            "room",
+        ]  # exclude content
 
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):
         token = super().get_token(user)
-        token['username'] = user.username
+        token["username"] = user.username
         # token['bio'] = user.bio
         # token['avatar'] = user.avatar
         # token['address'] = user.address
